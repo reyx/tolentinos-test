@@ -4,7 +4,6 @@ import { validate } from 'class-validator';
 import { Box } from './box.entity';
 import { BoxItem } from './box-item.entity';
 
-@Injectable({ scope: Scope.REQUEST })
 @Injectable()
 export class BoxesService {
   constructor() {}
