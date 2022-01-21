@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  db:
+    image: mariadb:10.5
+    command: --max_allowed_packet=268435456 # 256M
+    restart: always
+    ports:
+      - 3307:3306
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: tolentino
+      MYSQL_USER: tolentino
+      MYSQL_PASSWORD: U@li2Mama
+      MYSQL_ROOT_PASSWORD: U@li2Mama
+  dev:
+    container_name: tolentino_api_dev
+    image: tolentino-api-dev:1.0.0
+    build:
+      context: .
+      target: development
+      dockerfile: ./Dockerfile
+    command: npm run start:debug
+    ports:
+      - 3000:3000
+      - 9229:9229
+    volumes:
+      - .:/usr/src/app
+    restart: unless-stopped
+    depends_on:
+      - db
+  prod:
+    container_name: tolentino_api_prod
+    image: tolentino-api-prod:1.0.0
+    build:
+      context: .
+      target: production
+      dockerfile: ./Dockerfile
+    command: npm run start:prod
+    ports:
+      - 3000:3000
+      - 9229:9229
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+    depends_on:
+      - db
+
+volumes:
+  db_data:
